@@ -1,9 +1,9 @@
 /*
-* @date: 17/02/2022
-* @author: Almanza Martínez Francisco Alejadro
-* @subject: Criptography
-* @teacher: Sandra Diaz Santiago
-* @Description: Practice 1. Function that implements...
+* @ date: 17/02/2022
+* @ author: Almanza Martínez Francisco Alejadro
+* @ subject: Criptography
+* @ teacher: Sandra Diaz Santiago
+* @ Description: Practice 1. Function that implements...
 *	
 */
 #include <stdio.h>
