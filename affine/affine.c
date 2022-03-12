@@ -13,15 +13,18 @@
 #include <sys/param.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <string.h>
 
 int gcd(int, int); // Greatest Common Divisor
 int xgd(int, int); // Greatest Common Divisor inverse multiplicative
 int* z_closure(int); // Z* - Returns all Z closure elements of a number
 int* affine_key(int); // Implements all functions above for getting an affine key
 char* affine_cipher(char*, int, int, int);
+char* affine_decipher(char*, int, int, int);
 int get_index_of(char);
 int* get_indexes_of(char*);
 char get_letter_of(int n);
+char* get_text_of(int*, int);
 
 char english_alphabet[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','\0'};
 
@@ -35,8 +38,8 @@ int main(int argc, char const *argv[]){
 	int n = (sizeof english_alphabet) - 1;
 	int *z = z_closure(n);
 	int *k;
-	char *p = "Hola a todos";
-	char *cipher_text = "";
+	char *p = "hot";
+	char *cipher_text = "", *decipher_text = "";
 	printf("[I] Your input: a = %d, n = %d\n", a, n);
 	printf("[I] plain_text: %s\n", p);
 	printf("\t-> gcd(%d, %d) = %d \n", a, n, gcd(a,n));
@@ -44,8 +47,10 @@ int main(int argc, char const *argv[]){
 	printf("\t-> z_closure(%d): \n", n);
 	k = affine_key(n);
 	printf("[I] Affine key: a = %d, b = %d, a_inverse = %d\n", k[0], k[1], k[2]);
-	cipher_text = affine_cipher(p, k[0], k[1], n);
-	printf("\t%s \n", cipher_text);
+	cipher_text = affine_cipher(p, 7, 3, n);
+	printf("\t-> cipher_text: %s \n", cipher_text);
+	decipher_text = affine_decipher(cipher_text, 15, 3, n);
+	printf("\t-> decipher_text: %s \n", decipher_text);
 	return 0;
 }
 
@@ -108,7 +113,7 @@ int* affine_key(int n){
 	return k;
 }
 char* trim(char *s){
-	char *aux = malloc((sizeof(char))*sizeof s);
+	char *aux = malloc((sizeof(char))*strlen(s));
 	int i=0, j=0;
 	for (i=0; s[i]; i++){
 		if(s[i]!=' '){
@@ -128,8 +133,8 @@ int get_index_of(char q){
 	}
 }
 int* get_indexes_of(char *q){
-	int *aux = malloc(sizeof(int) * sizeof q);
-	for (int i = 0; q[i]; i++)
+	int *aux = malloc(sizeof(int) * strlen(q));
+	for (int i=0; q[i]; i++)
 		aux[i] = get_index_of(q[i]);
 	return aux;
 }
@@ -141,9 +146,9 @@ char get_letter_of(int n){
 		i++;
 	}
 }
-char* get_text_of(int *n){
-	char *t = malloc(sizeof(char) * sizeof(n));
-	for (int i=0;i<=sizeof(n)+1; i++)
+char* get_text_of(int *n, int size){
+	char *t = malloc(sizeof(char) * size);
+	for (int i=0;i<size; i++)
 		t[i] = get_letter_of(n[i]);
 	return t;
 }
@@ -152,15 +157,33 @@ char* affine_cipher(char* plain_text, int a, int b, int n){
 	int *indexes, *result;
 	plain_text = trim(plain_text);
 	indexes = get_indexes_of(plain_text);
-	result = malloc(sizeof(int)*sizeof(indexes));
-	for(int i=0;plain_text[i];i++)
+	result = malloc(strlen(plain_text)*sizeof(int));
+	for(int i=0;plain_text[i];i++){
 		result[i] = ((indexes[i]*a)+b)%n;
-	c = get_text_of(result);
+	}
+	c = get_text_of(result, strlen(plain_text));
 	return c;
 }
-char* affine_decipher(char* cipher_text, int a, int b, int n){
-	char plain_text = "";
-	int *indexes, *result;
 
+// unsigned modulo( int value, unsigned m) {
+//     int mod = value % (int)m;
+//     if (mod < 0) {
+//         mod += m;
+//     }
+//     return mod;
+// }
+char* affine_decipher(char* cipher_text, int a_inverse, int b, int n){
+	char *plain_text = "";
+	int *indexes, *result;
+	indexes = get_indexes_of(cipher_text);
+	result = malloc(strlen(cipher_text)*sizeof(int));
+	for(int i=0;cipher_text[i];i++){
+		// result[i] = modulo((a_inverse*(indexes[i]-b)), n);
+		result[i] = (a_inverse*(indexes[i]-b))%n;
+		if (result[i] < 0) 
+			result[i] += n;
+		printf("%d \n", result[i]);
+	}
+	plain_text = get_text_of(result, strlen(cipher_text));
 	return plain_text;
 }
