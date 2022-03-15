@@ -18,7 +18,8 @@
 int gcd(int, int); // Greatest Common Divisor
 int xgd(int, int); // Greatest Common Divisor inverse multiplicative
 int* z_closure(int); // Z* - Returns all Z closure elements of a number
-int* affine_key(int); // Implements all functions above for getting an affine key
+// int* affine_key(int); // Implements all functions above for getting an affine key
+int valid_numbers(int, int, int*);
 char* affine_cipher(char*, int, int, int);
 char* affine_decipher(char*, int, int, int);
 int get_index_of(char);
@@ -27,30 +28,37 @@ char get_letter_of(int n);
 char* get_text_of(int*, int);
 
 char english_alphabet[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','\0'};
+int primes[] = {2, 3, 5, 7, 11, 13, 17, 19, 23};
 
 int main(int argc, char const *argv[]){
 	printf("Affine Cipher 1\n");
-	if (argc<1){
-		printf("Usage: affine_cipher {plain_text} {a}\n");
+	if(argc<3){
+		printf("Usage: affine_cipher {a} {b} {plain_text}\n");
 		return 0;
 	}
-	int a = atoi(argv[1]);
+	int a = atoi(argv[1]), b = atoi(argv[2]);
 	int n = (sizeof english_alphabet) - 1;
-	int *z = z_closure(n);
-	int *k;
-	char *p = "hot";
+	int *z = z_closure(n), a_inverse=0;
+	char *p = malloc(sizeof(char)*strlen(argv[3]));
+	strcpy(p, argv[3]);
 	char *cipher_text = "", *decipher_text = "";
-	printf("[I] Your input: a = %d, n = %d\n", a, n);
-	printf("[I] plain_text: %s\n", p);
+	if(!valid_numbers(a, b, z))
+		return 1;
+	printf("[I] Your input: a = %d, b = %d, n = %d\n", a, b, n);
+	printf("    plain_text: %s\n", p);
 	printf("\t-> gcd(%d, %d) = %d \n", a, n, gcd(a,n));
-	printf("\t-> xgd(%d, %d) = %d \n", a, n, xgd(a, n));
+	a_inverse = xgd(a, n);
+	printf("\t-> xgd(%d, %d) = %d \n", a, n, a_inverse);
 	printf("\t-> z_closure(%d): \n", n);
-	k = affine_key(n);
-	printf("[I] Affine key: a = %d, b = %d, a_inverse = %d\n", k[0], k[1], k[2]);
-	cipher_text = affine_cipher(p, 7, 3, n);
+	printf("\t\t");
+	for(int i=0;i<sizeof(z);i++)
+		printf("%d, ", z[i]);
+	puts("");
+	printf("[I] Affine key: a = %d, b = %d, a_inverse = %d\n", a, b, a_inverse);
+	cipher_text = affine_cipher(p, a, b, n);
 	printf("\t-> cipher_text: %s \n", cipher_text);
-	decipher_text = affine_decipher(cipher_text, 15, 3, n);
-	printf("\t-> decipher_text: %s \n", decipher_text);
+	// decipher_text = affine_decipher(cipher_text, 15, 3, n);
+	// printf("\t-> decipher_text: %s \n", decipher_text);
 	return 0;
 }
 
@@ -72,20 +80,45 @@ int xgd(int a, int n){
 		puts("Greatest common divisor isn't 0, please retry");
 		return 0;
 	}
+	printf("\t xgd\n");
 	while(u!=1){
 		q=v/u;
-		r=v-q*u;
-		x=x2-q*x1;
+		r=v-(q*u);
+		x=x2-(q*x1);
 		v=u;
 		u=r;
 		x2=x1;
 		x1=x;
+		printf("\t u=%d, v=%d, x=%d, x2=%d, q=%d, r=%d \n",u, v, x, x2, q, r);
 	}
+	puts("");
 	return x1%n;
+}
+int valid_numbers(int a, int b, int* z){
+	int a_valid=0, b_valid=0;
+	for(int i=0;i<9;i++){
+		if(z[i]==a)
+			a_valid=1;
+		if(primes[i]==a)
+			a_valid=1;
+		if(z[i]==b)
+			b_valid=1;
+		if(primes[i]==b)
+			b_valid=1;
+	}
+	if(!a_valid){
+		puts("[I] a is invalid, choose a valid value");
+		return 0;
+	}
+	if(!b_valid){
+		puts("[I] b is invalid, choose a valid value");
+		return 0;
+	}
+	return 1;
 }
 int* z_closure(int n){
 	int i=n, *z, s=0;
-	z = (int *) malloc( sizeof(int)*n );
+	z = (int *)malloc(sizeof(int)*n);
 	while(i){
 		if(gcd(n,i) == 1){
 			z[s] = i;
@@ -94,23 +127,6 @@ int* z_closure(int n){
 		i--;
 	}
 	return z;
-}
-int* affine_key(int n){
-	static int k[3];
-	if(!(n>1)){
-		puts("[E] n must be greater than 1 (n>1)");
-		return 0;
-	}
-	int *z = z_closure(n);
-	int a = (rand() % (n + 1));
-	int b = (rand() % (n + 1));
-	while(gcd(a,n)!=1)
-		a = (rand() % (n + 1));
-	int a_inverse = xgd(a, n);
-	k[0]=a;
-	k[1]=b;
-	k[2]=a_inverse;
-	return k;
 }
 char* trim(char *s){
 	char *aux = malloc((sizeof(char))*strlen(s));
@@ -164,14 +180,6 @@ char* affine_cipher(char* plain_text, int a, int b, int n){
 	c = get_text_of(result, strlen(plain_text));
 	return c;
 }
-
-// unsigned modulo( int value, unsigned m) {
-//     int mod = value % (int)m;
-//     if (mod < 0) {
-//         mod += m;
-//     }
-//     return mod;
-// }
 char* affine_decipher(char* cipher_text, int a_inverse, int b, int n){
 	char *plain_text = "";
 	int *indexes, *result;
