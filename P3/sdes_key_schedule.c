@@ -4,9 +4,8 @@
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
 * @ Description: Implementing simple DES for cipher and decipher
-* [I] compile: gcc sdes.c -o sdes
-* [I] usage: ./sdes {-c|-d} {plaintext|ciphertext} {a of key}
-*	where -c is for cipher and -d for decipher
+* [I] compile: gcc sdes_key_schedule.c -o sdes_key_schedule
+* [I] usage: ./sdes_key_schedule
 */
 #include <stdio.h>
 #include <stdlib.h>
