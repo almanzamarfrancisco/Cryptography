@@ -21,28 +21,32 @@ int* get_indexes_of(char*);
 char get_letter_of(int n);
 char* get_text_of(int*, int);
 char* trim(char *s);
-char* g(char *key);
-
+void g(char k1[2][8], char *key);
+void permutation(char *final, char *n, int p[], int size);
 void print_16(int16_t);
 
 
 char english_alphabet[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','\0'};
 
 int main(int argc, char const *argv[]){
-	char key[11] = "1010000010\0", k1[10];
+	char key[11] = "1010000010\0", k[2][8]={"00000000", "00000000"};
+	char *message = malloc(sizeof(char)*8);
+	message="10111101";
+	char pm[11]="00000000000";
+	int ip[] = {2,6,3,1,4,8,5,7};
 	printf("**SDES**\n");
 	printf("original_key: \n\t%s\n", key);
-	puts(g(key));
-	// printf("k1: \n\t");
-	// print_16(k1);
-
+	g(k, key);
+	printf("Message: %s\n", message);
+	// permutation(pm, message, ip, 8);
+	printf("pm: %s\n", pm);
 	return 0;
 }
-char* permutation(char *n, int p[], int size){
+void permutation(char *final, char *n, int p[], int size){
 	int i=0;
-	static char t[11];
+	char t[11];
 	t[size-1]='\0';
-	printf("permutation %d: \n\t", size);
+	printf("Permutation %d: %s, %d, %d\n\t", size, n, strlen(n), size);
 	printf("n | ");
 	for (i=1;i<=size;i++)
 		printf("%2d ", i);
@@ -64,11 +68,12 @@ char* permutation(char *n, int p[], int size){
 	for (i=0;i<size+1;i++)
 		printf("%2c ", t[i]);
 	t[size]='\0';
-	return t;
+	strcpy(final, t);
+	puts("");
 }
-char *shift(int times, char *direction, char *k1, char *k2){
+void shift(char *prefinal_key, int times, char *direction, char *k1, char *k2){
 	unsigned char kcs1=0,kcs2=0, mask1=0, mask2=0;
-	static char prefinal_key[11]="0000000000\0";
+	char pk[11]="0000000000\0";
 	kcs1 = (int) strtol(k1, NULL, 2);
 	kcs2 = (int) strtol(k2, NULL, 2);
 	mask1 = mask1 | kcs1;
@@ -95,38 +100,37 @@ char *shift(int times, char *direction, char *k1, char *k2){
 		printf("%d", !!((kcs2 << i) & 0x80));
 	for(int i=3;i<8;i++){ // To obtain only the less 5 significative bits of each part
 		if(!!((kcs1 << i) & 0x80))
-			prefinal_key[i-3] = '1';
+			pk[i-3] = '1';
 		if(!!((kcs2 << i) & 0x80))
-			prefinal_key[i+2] = '1';
+			pk[i+2] = '1';
 	}
-	return prefinal_key;
+	strcpy(prefinal_key, pk);
 }
-char* g(char *key){
+void g(char subkeys[2][8], char *key){
 	int p10[] = {3,5,2,7,4,10,1,9,8,6};
 	int p8[] = {6,3,7,4,8,5,10,9};
-	char *kp = permutation(key, p10, 10), kp1[6], kp2[6], prefinal_key1[11], prefinal_key2[10], *a;
-	static char final_subkey1[8],final_subkey2[8];
-	printf("\n\n -> Permuted key: %s \n", kp);
+	char kp[10], kp1[6], kp2[6], prefinal_key1[11], prefinal_key2[10];
+	permutation(kp, key, p10, 10);
+	char final_subkey1[8],final_subkey2[8];
+	printf("\n\n -> Permuted key: %s \n\n", kp);
 	strncpy(kp1, kp, 5);kp1[5]='\0';
 	strncpy(kp2, kp+5, 5);kp2[5]='\0';
-	printf("Split key: \n\t");
-	printf("kp1: %s \n\t", kp1);
-	printf("kp2: %s \n", kp2);
-	a = shift(1,"<<", kp1, kp2);
-	strcpy(prefinal_key1, a);
+	printf("Splitted key: \n");
+	printf("\tkp1: %s \n\tkp2: %s\n", kp1, kp2);
+	shift(prefinal_key1, 1, "<<", kp1, kp2);
 	printf("\nPrefinal key 1:  %s\n", prefinal_key1);
-	// a = permutation(prefinal_key1, p8, 8);
-	// strcpy(final_subkey1, a);
-	// printf("\nFinal subkey 1 :  %s\n", final_subkey1);
-	// strcpy(prefinal_key1, "0000111000");
+	permutation(final_subkey1, prefinal_key1, p8, 8);
+	printf("\n=> Final subkey 1:  %s\n", final_subkey1);
 	strncpy(kp1, prefinal_key1, 5);kp1[5]='\0';
 	strncpy(kp2, prefinal_key1+5, 5);kp2[5]='\0';
-	printf("=> 2:\n\tkp1: %s \n\tkp2: %s\n", kp1, kp2);
-	a = shift(2,"<<", kp1, kp2);
-	strcpy(prefinal_key2, a);
-	printf("\nPrefinal key2:  %s\n", prefinal_key2);
-	// printf("\nFinal subkey 2 :  %s\n", final_subkey2);
-	return " ";
+	printf("Splitted key: \n");
+	printf("\tkp1: %s \n\tkp2: %s\n", kp1, kp2);
+	shift(prefinal_key2, 2,"<<", kp1, kp2);
+	printf("\nPrefinal key 2:  %s\n", prefinal_key2);
+	permutation(final_subkey2, prefinal_key2, p8, 8);
+	printf("\n=> Final subkey 2:  %s\n", final_subkey2);
+	strcpy(subkeys[0], final_subkey1);
+	strcpy(subkeys[1], final_subkey2);
 }
 void print_16(int16_t n){
 	for (int i = 0; i < 16; i++)
