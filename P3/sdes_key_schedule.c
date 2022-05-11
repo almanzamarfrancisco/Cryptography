@@ -22,49 +22,49 @@ char* get_text_of(int*, int);
 char* trim(char *s);
 void g(char k1[2][8], char *key);
 void permutation(char *final, char *n, int p[], int size);
-void print_16(int16_t);
-
+void round1(char *final_message, char *message, char *k1);
 
 char english_alphabet[] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','\0'};
 
 int main(int argc, char const *argv[]){
 	char key[11] = "1010000010\0", k[2][8]={"00000000", "00000000"};
 	char *message = malloc(sizeof(char)*8);
+	char *round1_message = malloc(sizeof(char)*8);
 	message="10111101";
 	char pm[11]="00000000000";
 	int ip[] = {2,6,3,1,4,8,5,7};
+	int initial_permutation[] = {2,6,3,1,4,8,5,7};
 	printf("**SDES**\n");
 	printf("original_key: \n\t%s\n", key);
 	g(k, key);
 	printf("Message: %s\n", message);
-	// permutation(pm, message, ip, 8);
+	permutation(pm, message, initial_permutation, 8);
 	printf("pm: %s\n", pm);
+	round1(round1_message, pm, k[0]);
 	return 0;
 }
 void permutation(char *final, char *n, int p[], int size){
 	int i=0;
 	char t[11];
 	t[size-1]='\0';
-	printf("Permutation %d: %s, %d, %d\n\t", size, n, strlen(n), size);
+	printf("Permutation %d: %s\n\t", size, n);
 	printf("n | ");
 	for (i=1;i<=size;i++)
 		printf("%2d ", i);
 	printf("\n\t");
 	for (i=0;i<size+2;i++)
 		printf("-- ", i);
-
 	printf("\n\tp | ");
 	for (i=0;i<size;i++){
 		printf("%2d ", p[i]);
 		t[i] = n[p[i]-1];
 	}
-
 	printf("\n\tk | ");
 	for (i=0; i<size+1;i++)
 		printf("%2c ", n[i]);
 	
 	printf("\n\tr | ");
-	for (i=0;i<size+1;i++)
+	for (i=0;i<size;i++)
 		printf("%2c ", t[i]);
 	t[size]='\0';
 	strcpy(final, t);
@@ -131,10 +131,23 @@ void g(char subkeys[2][8], char *key){
 	strcpy(subkeys[0], final_subkey1);
 	strcpy(subkeys[1], final_subkey2);
 }
-void print_16(int16_t n){
-	for (int i = 0; i < 16; i++)
-		printf("%d", !!((n << i) & 0x8000));
-	puts("");
+void round1(char *final_message, char *message, char *k1){
+	char *l=(char*)malloc(sizeof(char)*4), *r=(char*)malloc(sizeof(char)*4);
+	char *pl=(char*)malloc(sizeof(char)*4), *pr=(char*)malloc(sizeof(char)*4);
+	unsigned char xor_message;
+	int ep[]={4,1,2,3,2,3,4,1};
+	printf("Round1: %s\n\t", message);
+	strncpy(l,message,4);
+	strncpy(r,message+4,4);
+	printf("L: %s, R:%s\n", l, r);
+	permutation(pr, r, ep, 8);
+	unsigned char prc = (int) strtol(pr, NULL, 2);
+	unsigned char k1c = (int) strtol(k1, NULL, 2);
+	xor_message = prc ^ k1c;
+	for (int i = 0; i < 8; i++){
+		printf("%d", !!((xor_message << i) & 0x80));
+	}
+	printf("\n");
 }
 int get_index_of(char q){
 	int i = 0;
