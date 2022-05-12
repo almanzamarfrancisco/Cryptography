@@ -6,7 +6,7 @@
 * @ Description: Practice 2 / Binary string to Base64 
 * [I] compile: gcc base64.c -o base64.c
 * [I] usage: ./base64.c [binary/plaintext] [string]
-* i.e. ./base64 binary "000111 101000 100101 011010"
+* i.e. ./base64 binary "000111 101000 100101 011010 001100 101110 100111 011101 101000"
 * i.e. ./base64 plaintext "Hola Mundo"
 */
 #include <stdio.h>
@@ -25,7 +25,7 @@ int main(int argc, char const *argv[]){
 		perror("[E] Too few arguments");
 		exit(EXIT_FAILURE);
 	}
-	char input_string[30], string[30]=" ", ss[20];
+	char input_string[100], string[150]=" ", ss[20];
 	unsigned char value=0;
 	strcpy(input_string, argv[2]);
 	strcat(string, input_string);
@@ -51,36 +51,26 @@ int main(int argc, char const *argv[]){
 					// printf("%s \t", ss);
 					for(int i=0;ss[i];i++){
 						if(ss[i]>64 && ss[i]<97){
-							// printf("%d ", ss[i]-65);
 							transformed[counter] = ss[i]-65;
-							// put_binary(transformed[counter]);
 							counter++;
 						}
 						if(ss[i]>96){
-							// printf("%d ", ss[i]-71);
 							transformed[counter] = ss[i]-71;
-							// put_binary(transformed[counter]);
 							counter++;
 						}
 						if(ss[i]>48 && ss[i]<58){
-							// printf("%d ", ss[i]+4);
 							transformed[counter] = ss[i]-71;
-							// put_binary(transformed[counter]);
 							counter++;
 						}
 						if(ss[i]=='+'){
-							// printf("%d ", 62);
 							transformed[counter] = ss[i]-71;
-							// put_binary(transformed[counter]);
 							counter++;
 						}
 						if(ss[i]=='/'){
-							// printf("%d ", 63);
 							transformed[counter] = ss[i]-71;
-							// put_binary(transformed[counter]);
 							counter++;
 						}
-					}//puts("");
+					}
 					strcpy(ss, "                   ");
 				}
 			}
