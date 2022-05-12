@@ -7,7 +7,7 @@
 * [I] compile: gcc base64.c -o base64.c
 * [I] usage: ./base64.c [binary/plaintext] [string]
 * i.e. ./base64 binary "000111 101000 100101 011010"
-* i.e. ./base64 plaintext "Hola"
+* i.e. ./base64 plaintext "Hola Mundo"
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,39 +42,51 @@ int main(int argc, char const *argv[]){
 	else{
 		if(!strcmp("plaintext", argv[1])){
 			strcat(string, " ");
-			int last_space = 0;
-			unsigned char transformed[50];
+			int last_space = 0, transformed[50], counter=0;
 			printf("-> String: %s\n", string);
 			for(int j=0;string[j];j++){
 				if(string[j] == ' '){
 					strncpy(ss, string+last_space, abs(last_space-j));
 					last_space = j+1;
-					printf("%s \t", ss);
+					// printf("%s \t", ss);
 					for(int i=0;ss[i];i++){
 						if(ss[i]>64 && ss[i]<97){
-							printf("%d ", ss[i]-65);
-							put_binary(ss[i]-65);
+							// printf("%d ", ss[i]-65);
+							transformed[counter] = ss[i]-65;
+							// put_binary(transformed[counter]);
+							counter++;
 						}
 						if(ss[i]>96){
-							printf("%d ", ss[i]-71);
-							put_binary(ss[i]-71);
+							// printf("%d ", ss[i]-71);
+							transformed[counter] = ss[i]-71;
+							// put_binary(transformed[counter]);
+							counter++;
 						}
 						if(ss[i]>48 && ss[i]<58){
-							printf("%d ", ss[i]+4);
-							put_binary(ss[i]-71);
+							// printf("%d ", ss[i]+4);
+							transformed[counter] = ss[i]-71;
+							// put_binary(transformed[counter]);
+							counter++;
 						}
 						if(ss[i]=='+'){
-							printf("%d ", 62);
-							put_binary(ss[i]-71);
+							// printf("%d ", 62);
+							transformed[counter] = ss[i]-71;
+							// put_binary(transformed[counter]);
+							counter++;
 						}
 						if(ss[i]=='/'){
-							printf("%d ", 63);
-							put_binary(ss[i]-71);
+							// printf("%d ", 63);
+							transformed[counter] = ss[i]-71;
+							// put_binary(transformed[counter]);
+							counter++;
 						}
-					}puts("");
+					}//puts("");
 					strcpy(ss, "                   ");
 				}
 			}
+			for(int i=0;i<counter;i++)
+				put_binary(transformed[i]);
+			puts("");
 		}
 		else
 			printf("Second argument not recognized\n");
