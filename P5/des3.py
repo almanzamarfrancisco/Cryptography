@@ -1,16 +1,31 @@
+"""
+	* @ date: 15/05/2022
+	* @ author: Almanza Martínez Francisco Alejadro
+	* @ subject: Criptography
+	* @ teacher: Sandra Diaz Santiago
+	* @ Description: Practice 5. 3DES encryption. Usage python des.py <operation_mode>
+	*	0: "CBC"
+	*	1: "CTR"
+	*	2: "OFB"
+	*	3: "CFB"
+	*	
+"""
 from Crypto.Cipher import DES3
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad
-import base64
-import os
+import base64, os, sys
 
 if __name__ == '__main__':
+	if not len(sys.argv) > 1:
+		print("[E] Operation mode is missing: 0: CBC, 1: CTR, 2: OFB, 3: CFB")
+		exit()
+	op_mode = int(sys.argv[1])
 	sec = os.urandom(24)
 	# Avoid Option 3
 	while True:
 		try:
 			key = DES3.adjust_key_parity(sec)
-			f = open("./keys/key.txt", "wb")
+			f = open(f"./keys/key{sys.argv[1]}.txt", "wb")
 			b64_key = base64.b64encode(key)
 			f.write(b64_key)
 			f.close()
@@ -20,8 +35,15 @@ if __name__ == '__main__':
 			break
 		except ValueError:
 			pass
-	cipher = DES3.new(key, DES3.MODE_CFB)
-	f = open("./messages/message.txt", "wb")
+	if op_mode == 0:
+		cipher = DES3.new(key, DES3.MODE_CBC)
+	if op_mode == 1:
+		cipher = DES3.new(key, DES3.MODE_CTR)
+	if op_mode == 2:
+		cipher = DES3.new(key, DES3.MODE_OFB)
+	if op_mode == 3:
+		cipher = DES3.new(key, DES3.MODE_CFB)
+	f = open(f"./messages/message{sys.argv[1]}.txt", "wb")
 	plaintext = b"There once a ship that put to sea..."
 	msg = cipher.iv + cipher.encrypt(pad(plaintext, 256))
 	b64 = base64.b64encode(msg)
