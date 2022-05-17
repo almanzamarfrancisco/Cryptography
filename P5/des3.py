@@ -3,7 +3,7 @@
 	* @ author: Almanza Martínez Francisco Alejadro
 	* @ subject: Criptography
 	* @ teacher: Sandra Diaz Santiago
-	* @ Description: Practice 5. 3DES encryption. Usage python des.py <operation_mode>
+	* @ Description: Practice 5. 3DES encryption. Usage python des3.py <operation_mode>
 	*	0: "CBC"
 	*	1: "CTR"
 	*	2: "OFB"
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 	while True:
 		try:
 			key = DES3.adjust_key_parity(sec)
-			f = open(f"./keys/key{sys.argv[1]}.txt", "wb")
+			f = open(f"./keys/DES3_key{sys.argv[1]}.txt", "wb")
 			b64_key = base64.b64encode(key)
 			f.write(b64_key)
 			f.close()
@@ -43,7 +43,7 @@ if __name__ == '__main__':
 		cipher = DES3.new(key, DES3.MODE_OFB)
 	if op_mode == 3:
 		cipher = DES3.new(key, DES3.MODE_CFB)
-	f = open(f"./messages/message{sys.argv[1]}.txt", "wb")
+	f = open(f"./messages/DES3_message{sys.argv[1]}.txt", "wb")
 	plaintext = b"There once a ship that put to sea..."
 	msg = cipher.iv + cipher.encrypt(pad(plaintext, 256))
 	b64 = base64.b64encode(msg)

@@ -1,2 +1,4 @@
 keys/*
 messages/*
+nonces/*
+tags/*
