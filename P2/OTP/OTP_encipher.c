@@ -16,23 +16,27 @@
 #include <string.h>
 #include <stdint.h>
 
-char base64_tablel[] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/','\0'};
+char base64_table[] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/','\0'};
 
 unsigned int get_random_byte();
 void put_binary(int);
-void base64();
+u_char *encipher_base64(u_char*);
+u_char *decipher_base64(u_char*);
 void write_to_binary_file(u_char *content, int len, char *name);
 
-int main(int argc, char const *argv[]){
+int main(int argc, char *argv[]){
 	if(!(argc>1)){
 		perror("[E] Too few arguments");
 		exit(EXIT_FAILURE);
 	}
 	unsigned int len=strlen(argv[1]);
-	u_char ciphertext[100], key[100];
+	u_char *b64text, ciphertext[100], key[100];
+	b64text = malloc(sizeof(u_char)*100);
+	b64text = encipher_base64(argv[1]);
+	printf("This is: %s\n", b64text);
 	for (int i=0;i<len; i++){
 		key[i] = (char)get_random_byte();
-		ciphertext[i] = argv[1][i] ^ key[i];
+		ciphertext[i] = b64text[i] ^ key[i];
 	}
 	write_to_binary_file(key, len, "key.bin");
 	write_to_binary_file(ciphertext, len, "ciphertext.bin");
@@ -70,9 +74,11 @@ void put_binary(int n){
 	}
 	printf("\n");
 }
-void base64(){
-	char string[150]=" ", ss[20];
-	int last_space = 0, transformed[50], counter=0;
+u_char *encipher_base64(u_char *input){
+	u_char string[150]=" ", ss[20];
+	static u_char transformed[100];
+	strcat(string, input);
+	int last_space = 0, counter=0;
 	strcat(string, " ");
 	printf("-> String: %s\n", string);
 	for(int j=0;string[j];j++){
@@ -105,5 +111,17 @@ void base64(){
 			strcpy(ss, "                   ");
 		}
 	}
-	printf("Tranformed: %s", transformed);
+	// printf("Tranformed: %s\n", transformed);
+	return transformed;
+}
+u_char *decipher_base64(u_char *input){
+	u_char string[150]=" ", ss[20], value=0;
+	static u_char transformed[100];
+	strcat(string, input);
+	for(int j=0;string[j];j++){
+		if(string[j] == ' ')
+			printf(" ");
+		printf("%c", base64_table[string[j]]);
+	}
+	puts("");
 }

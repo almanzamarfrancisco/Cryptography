@@ -19,6 +19,9 @@
 #include <fcntl.h>
 
 u_char *read_from_file(char *name);
+u_char *decipher_base64(u_char *input);
+
+char base64_table[] = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','+','/','\0'};
 
 int main(){
 	u_char *key, *cipher_text, *plain_text;
@@ -27,8 +30,9 @@ int main(){
 	cipher_text = read_from_file("./ciphertext.bin");
 	for(int i = 0; i<20; i++){
 		plain_text[i] = cipher_text[i] ^ key[i];
-		printf("%c", plain_text[i]);
+		// printf("%c", plain_text[i]);
 	}
+	decipher_base64(plain_text);
 	puts("");
 	return 0;
 }
@@ -44,4 +48,15 @@ u_char *read_from_file(char *name){
     fread(file_contents, sb.st_size, 1, fp);
     // printf("read data: %s\n", file_contents);
 	return file_contents;
+}
+u_char *decipher_base64(u_char *input){
+	u_char string[150]=" ", ss[20], value=0;
+	static u_char transformed[100];
+	strcat(string, input);
+	for(int j=0;string[j];j++){
+		if(string[j] == ' ')
+			printf(" ");
+		printf("%c", base64_table[string[j]]);
+	}
+	puts("");
 }
