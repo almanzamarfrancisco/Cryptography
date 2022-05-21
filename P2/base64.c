@@ -4,8 +4,8 @@
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
 * @ Description: Practice 2 / Binary string to Base64 
-* [I] compile: gcc base64.c -o base64.c
-* [I] usage: ./base64.c [binary/plaintext] [string]
+* [I] compile: gcc base64.c -o base64
+* [I] usage: ./base64 [binary/plaintext] [string]
 * i.e. ./base64 binary "000111 101000 100101 011010 001100 101110 100111 011101 101000"
 * i.e. ./base64 plaintext "Hola Mundo"
 */
