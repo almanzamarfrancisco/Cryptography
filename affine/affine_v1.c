@@ -4,51 +4,49 @@
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
 * @ Description: Implementation of affine cipher with english_alphabet
-* [I] compile: gcc affine.c -o affine
+* [I] compile: gcc affine_v1.c -o affine_v1
 * [I] usage: ./affine {-c|-d} {plaintext|ciphertext} {a of key}
 *	where -c is for cipher and -d for decipher
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 int are_key_valid(int a, int b);
 int gcd(int, int); // Greatest Common Divisor
-int xgd(int, int); // Greatest Common Divisor inverse multiplicative
+int xgd(int, int); // Greatest Common Divisor (Extended Eucledean algorithm) 
+void cipher(char*, char*, int, int, int);
+void decipher(char*, char*, int, int, int);
+int inverse_module(int, int);
 int main(int argc, char const *argv[]){
-	printf("Affine Cipher 1\n");
-	if(argc<3){
-		printf("Usage: affine_cipher {a} {b} {plain_text}\n");
+	printf("Affine Cipher 2 (English alphabet)\n");
+	if(argc<4){
+		printf("Usage: ./affine_v1 {-c|-d} {a of key} {b of key} {plaintext|ciphertext}\n");
 		exit(0);
 	}
-	int a = atoi(argv[1]), b = atoi(argv[2]), m = 26, x = 0;
+	int a = atoi(argv[2]), b = atoi(argv[3]), m = 26;
 	if(gcd(a, m) != 1){
 		perror("The Key a is not valid\n");
 		exit(1);
 	}
-	char *plain_text = "TWENTY FIFTEEN", *cipher_text;
-	cipher_text = (char*)malloc(sizeof(char)*strlen(plain_text));
-	for(int i=0;i<strlen(plain_text);i++)
-		printf("%2c ", plain_text[i]);
-	puts("");
-	for(int i=0;i<strlen(plain_text);i++){
-		x = plain_text[i] - 65; // Base on ascii - A is 65
-		printf("%2d ", x);
-		cipher_text[i] = (((a * x) + b) % m) + 65;
+	char *plain_text, *cipher_text;
+	plain_text  = (char*)malloc(sizeof(char)*strlen(argv[4]));
+	cipher_text = (char*)malloc(sizeof(char)*strlen(argv[4]));
+	if (!strcmp(argv[1], "-c")){
+		strcpy(plain_text, argv[4]);
+		printf("Plain text: %s\n", plain_text);
+		cipher(plain_text, cipher_text, a, b, m);
+		printf("Cipher text: %s\n", cipher_text);
+	}else if(!strcmp(argv[1], "-d")){
+		strcpy(cipher_text, argv[4]);
+		printf("Cipher text: %s\n", cipher_text);
+		decipher(cipher_text, plain_text, a, b, m);
+		printf("\nPlain text: %s\n", plain_text);
 	}
-	puts("\n-----------------------------------------------");
-	for (int x = 0; x < strlen(plain_text); x++){
-		printf("%2c ", cipher_text[x]);
+	else{
+		printf("Invalid argument. Usage: ./affine_v1 {-c|-d} {plaintext|ciphertext} {a of key} {b of key}\n");
+		exit(1);
 	}
-	// cipher_text[strlen(plain_text)] = '\0';
-	puts("");
-	for (int x = 0; x < strlen(plain_text); x++){
-		printf("%2d ", cipher_text[x] - 65);
-	}
-	puts("");
-	printf("Plain text: %s\n", plain_text);
-	printf("Cipher text: %s\n", cipher_text);
 	return 0;
 }
 int gcd(int a, int n){ // TODO: Change this function for an optimized function
@@ -82,4 +80,29 @@ int xgd(int a, int n){
 	}
 	puts("");
 	return x1%n;
+}
+void cipher(char *plain_text, char *cipher_text, int a, int b, int m){
+	int x = 0;
+	for(int i=0;i<strlen(plain_text);i++){
+		x = plain_text[i] - 65; // Based on ascii - A is 65
+		if(!(x < 0))
+			cipher_text[i] = (((a * x) + b) % m) + 65;
+		else
+			cipher_text[i] = ' ';
+	}
+}
+void decipher(char *cipher_text, char *plain_text, int a, int b, int m){
+	int a_inverse = inverse_module(a, m), x = 0;
+	for(int i=0;i<strlen(cipher_text);i++){
+		x = cipher_text[i] + 65;
+		if(x != ' '+65)
+			plain_text[i] = (a_inverse * (x - b) % m) + 65;
+		else
+			plain_text[i] = ' ';
+	}
+}
+int inverse_module(int a, int m){
+	for (int x = 1; x < m; x++)
+		if (((a % m) * (x % m)) % m == 1)
+			return x;
 }
