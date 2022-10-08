@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 int gcd(int, int); // Greatest Common Divisor
-int xgd(int, int); // Greatest Common Divisor inverse multiplicative
+int xgd(int, int); // Greatest Common Divisor (Extended Eucledean algorithm)
 int* z_closure(int); // Z* - Returns all Z closure elements of a number
 int* affine_key(int); // Implements all functions above for getting an affine key
 
