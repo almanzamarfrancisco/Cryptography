@@ -1,9 +1,9 @@
 /*
-* @ date: 08/03/2022
+* @ date: 05/09/2022
 * @ author: Almanza Martínez Francisco Alejadro
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
-* @ Description: Implementing affine cipher with english_alphabet
+* @ Description: Implementation of affine cipher with english_alphabet
 * [I] compile: gcc affine.c -o affine
 * [I] usage: ./affine {-c|-d} {plaintext|ciphertext} {a of key}
 *	where -c is for cipher and -d for decipher
