@@ -1,5 +1,5 @@
 /*
-* @ date: 11/05/2022
+* @ date: 08/10/2022
 * @ author: Almanza Martínez Francisco Alejadro
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
@@ -74,6 +74,7 @@ int main(int argc, char const *argv[]){
 					strcpy(ss, "                   ");
 				}
 			}
+			puts(transformed);
 			for(int i=0;i<counter;i++)
 				put_binary(transformed[i]);
 			puts("");

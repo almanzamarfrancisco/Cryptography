@@ -1,5 +1,5 @@
 /*
-* @ date: 17/05/2022
+* @ date: 08/10/2022
 * @ author: Almanza Martínez Francisco Alejadro
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
@@ -53,7 +53,7 @@ unsigned int get_random_byte(){
 void write_to_binary_file(u_char *content, int len, char *name){
 	size_t element_size = sizeof(char)*len;
 	size_t elements_to_write = sizeof content;
-	printf("Content: %d\n", strlen(content));
+	printf("Content length: %d\n", strlen(content));
 	for(int j=0;j<len;j++)
 		printf("%u ", content[j]);
 	puts("");
