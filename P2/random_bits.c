@@ -1,13 +1,13 @@
 /*
-* @ date: 08/10/2022
+* @ date: 30/10/2022
 * @ author: Almanza Martínez Francisco Alejadro
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
-* @ Description: Practice 2 / pseudorandom bits 
+* @ Description: Practice 2 / random bits 
 * @ Source: James Aspnes from 2003 to 2012. [Online] https://www.cs.yale.edu/homes/aspnes/pinewiki/C(2f)Randomization.html
 * @ Important: This program is just for Linux, it uses /dev/random that derive their random bits from physically random properties of the computer
-* [I] compile: gcc pseudo_random_bits.c -o pseudo_random_bits
-* [I] usage: ./pseudo_random_bits
+* [I] compile: gcc random_bits.c -o random_bits
+* [I] usage: ./random_bits
 */
 #include <stdio.h>
 int main(int argc, char **argv){
