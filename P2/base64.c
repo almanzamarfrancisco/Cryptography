@@ -9,6 +9,14 @@
 * i.e. ./base64 -e "Hola Mundo"
 * i.e. ./base64 -d "000111 101000 100101 011010 001100 101110 100111 011101 101000"
 */
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/param.h>
@@ -62,12 +70,18 @@ void cipher_base64(char *plain_text, char* cipher_text){
 	}
 	puts("");
 	for (int i = 0; i < strlen(plain_text); i++){
+		if(i%2)
+			printf(ANSI_COLOR_CYAN"");
+		else
+			printf(""ANSI_COLOR_RESET);
 		put_binary(plain_text[i], 0);
 	}
+	printf(""ANSI_COLOR_RESET);
 	puts("");
-	printf("Cipher text: %s\n", cipher_text);
+	// printf("Cipher text: %s\n", cipher_text);
 	for(int i = 0;i<strlen(plain_text);i++){
 		x = 0; y = 0;
+		printf("\nSwitch: %d ", (i%4));
 		switch(i%4){
 			case 0:
 				x = 0xFC & plain_text[i];
@@ -89,13 +103,19 @@ void cipher_base64(char *plain_text, char* cipher_text){
 			break;
 			case 3:
 				x = 0x3F & plain_text[i-1];
+				// y = & plain_text[i];
 			break;
 		}
-		printf("Obtained value: %2d -> ", x);
+		if(i%2)
+			printf(ANSI_COLOR_RED"");
+		else
+			printf(""ANSI_COLOR_RESET);
 		put_binary(x, 2);
-		puts("");
+		// puts("");
 		cipher_text[i] = x;
 	}
+	puts("");
+	printf(""ANSI_COLOR_RESET);
 	for (int i = 0; i < strlen(cipher_text); i++){
 		if(cipher_text[i] <= 25)
 			cipher_text[i]+=65;
@@ -120,5 +140,5 @@ void put_binary(int n, int from){
 		else
 			putchar('0');
 	}
-	putchar(' ');
+	// putchar(' ');
 }
