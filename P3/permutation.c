@@ -1,5 +1,5 @@
 /*
-* @ date: 03/11/2022
+* @ date: 04/11/2022
 * @ author: Almanza Martínez Francisco Alejadro
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
@@ -26,13 +26,16 @@ int main(int argc, char const *argv[]){
 	puts("");
 	printf("[I] Value in char: %2c \n[I] Value in int: %2d\n", byte, byte); 	
 	make_permutation(&byte, permutation, permutation_size);
+	printf("=> Permutation gotten: ");
+	put_binary(byte);
+	puts("");
 	return 0;
 }
 
 void make_permutation(u_char *b, int p[], int size){
 	int i=0, mask=0, bitshifted[8], reqbit=0, l=0, result=0;
-	printf("[I] Permuting... ");
-	printf("[I] Original value: %d\nBinary: ", *b);
+	printf("[I] Permuting... \n");
+	printf("[I] Original value: %d\n[I] Binary: ", *b);
 	put_binary((int)*b);
 	for (i=0;i<size;i++){
 		mask = 1;
@@ -48,9 +51,10 @@ void make_permutation(u_char *b, int p[], int size){
 		printf(" ");
 	}
 	puts("");
-	printf("=> Permuted: ");
-	put_binary(result);
-	puts("");
+	printf("[I] Permuted finished \n");
+	// put_binary(result);
+	// puts("");
+	*b = result;
 }
 void put_binary(int b){
 	// printf("Value: %2d\n", v);
