@@ -3,7 +3,7 @@
 * @ author: Almanza Martínez Francisco Alejadro
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
-* @ Description: Implementing simple DES for cipher and decipher
+* @ Description: Permuting function
 * [I] compile: gcc -o permutation permutation.c
 * [I] usage: ./permutation
 */
