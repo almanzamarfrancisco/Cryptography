@@ -1,9 +1,9 @@
 /*
-* @ date: 08/03/2022
+* @ date: 04/11/2022
 * @ author: Almanza Martínez Francisco Alejadro
 * @ subject: Criptography
 * @ teacher: Sandra Diaz Santiago
-* @ Description: Implementing simple DES for cipher and decipher
+* @ Description: Implementing simple Simple DES schedule
 * [I] compile: gcc sdes_key_schedule.c -o sdes_key_schedule
 * [I] usage: ./sdes_key_schedule
 */

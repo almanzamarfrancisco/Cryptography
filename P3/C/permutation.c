@@ -33,7 +33,7 @@ int main(int argc, char const *argv[]){
 }
 
 void make_permutation(u_char *b, int p[], int size){
-	int i=0, mask=0, bitshifted[8], reqbit=0, l=0, result=0;
+	int i=0, mask=0, bitshifted[size], reqbit=0, l=0, result=0;
 	printf("[I] Permuting... \n");
 	printf("[I] Original value: %d\n[I] Binary: ", *b);
 	put_binary((int)*b);
